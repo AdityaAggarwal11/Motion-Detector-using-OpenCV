@@ -1,0 +1,19 @@
+from Motion_Detector import df
+from bokeh.plotting import figure, show, output_file  #bokeh ke modules import krdiye
+from bokeh.models import HoverTool, ColumnDataSource
+
+df["Start_string"] = df["Start"].dt.strftime("%Y-%m-%d %H:%M:%S")  #dono line convert time to string format
+df["End_string"] = df["End"].dt.strftime("%Y-%m-%d %H:%M:%S")
+
+cds = ColumnDataSource(df)  # we have passes the sequence in here of pandas datframe
+ #core of most bokeh plot, provides data to graph of the plot. It stores pandas, numpy arrays.
+
+p = figure(x_axis_type='datetime',height=100,width=500,title="Motion Graph")  #to constrauct basic structure of graph
+p.yaxis.minor_tick_line_color = None   #to remove thin vertical line on the y axis that u can see on each major tick
+p.yaxis.ticker.desired_num_ticks = 1   # we have set deafault ticker value as 1 on y axis
+hover = HoverTool(tooltips=[("Start","@Start_string"),("End","@End_string")]) #to set by hovering on graph to show start and end
+p.add_tools(hover)  #to add in graph
+
+q = p.quad(left="Start", right="End",bottom=0,top=1,color="red",source = cds)  #for plotiing quadrilateral on graph
+output_file("Graph1.html")
+show(p)
